@@ -1,0 +1,2494 @@
+Transcript Powered by AI
+
+Evaluating RAG and Semantic Search Systems
+
+
+00:00
+Hey, good morning,
+everyone, can you hear me?
+
+00:03
+Okay, great, so thank you
+for joining today.
+
+00:06
+How many of you have already
+taken a DLI before?
+
+00:10
+Okay, so you know all the
+logistics, okay, great.
+
+00:14
+So this DLI is very time critical,
+I think, because as we see
+
+00:20
+today that RAG is getting into
+production, we see we're not at
+
+00:25
+the stage where we're experimenting
+with RAG, we're rather now
+
+00:29
+Starting to get into production,
+deploying, scaling, and so
+
+00:31
+on, and one of the issues
+that we keep seeing, and our
+
+00:34
+team here, by the way, you'll
+see all the TAs as well, this
+
+00:37
+is what we do day to day.
+
+00:38
+We work with RAG systems, we train
+LLMs, this is our day to day,
+
+00:42
+so we know of the challenges when
+it comes to evaluating RAG systems.
+
+00:50
+And what's behind this, and
+you can see a lot of this
+
+00:52
+from thought leaders as well
+in the deep learning world, is that
+
+00:57
+Test-driven development, so anyone
+that's written code knows how
+
+01:00
+important test-driven development
+is, writing unit tests and so on.
+
+01:04
+How do you do the same in the
+world of LLMs, and even more so,
+
+01:08
+how do you do the same with RAG?
+
+01:11
+It's a very complicated problem,
+and in fact, we're gonna make
+
+01:14
+it more complicated because
+what we see in practice is we see
+
+01:17
+a lot of organizations that have
+
+01:21
+These ancient semantic search
+systems as well and they
+
+01:24
+don't want to let go of
+these semantic search systems.
+
+01:26
+They have some RAG, they have
+some semantic search, they
+
+01:29
+want to mix both of them.
+
+01:31
+So how do you evaluate both?
+
+01:32
+How do you use modern
+
+01:34
+LLMs, LLM as a judge, many
+of these techniques that you
+
+01:38
+are familiar with, how do
+we use those not only to apply
+
+01:41
+them to evaluate RAG, but how do we
+take the next step and practically
+
+01:46
+apply these to old systems as well
+and make use of new technology?
+
+01:50
+So that's what we'll be covering
+in today's course.
+
+01:54
+And we're going to start with...
+
+01:59
+See, this is not working, so
+we're going to start with...
+
+02:06
+We're gonna start with a little
+bit of evolution of RAG systems
+
+02:10
+and how they came about to be.
+
+02:12
+So how many of you actually
+have worked on a RAG system?
+
+02:19
+Great, and how many have brought a
+RAG system to production where you
+
+02:22
+have customers actually using it?
+
+02:25
+Okay, that's the usual statistic.
+
+02:27
+Actually, that's a little bit
+higher when it comes to production.
+
+02:30
+So what we're gonna talk about
+is about the evolution of
+
+02:33
+how RAG came about.
+
+02:35
+A lot of you will be familiar, and
+this will be the first notebook.
+
+02:37
+So for those of you that know
+it, you'll get right through it.
+
+02:40
+But when we talk about RAG
+systems, we have to start
+
+02:44
+with classic search flow.
+
+02:45
+So everyone's familiar
+with classic search.
+
+02:47
+We've been using it for years.
+
+02:49
+We have, first we have
+this crawling stage.
+
+02:52
+And then afterwards, we have
+some kind of analysis of the
+
+02:56
+content that we crawled.
+
+02:58
+And we have indexing.
+
+03:00
+And finally, we have ranking.
+
+03:02
+And you go through all this flow.
+
+03:05
+And we have some very intelligent
+indexing systems.
+
+03:09
+And it's perfect, right?
+
+03:10
+This is a very powerful tool.
+
+03:14
+One of the issues that you'll
+see also in the first notebook
+
+03:16
+is that ranking in these systems
+is closed source, right?
+
+03:19
+So when you use a search engine,
+it has its own ranking algorithm,
+
+03:22
+and often what you wanna do is
+you wanna have control of ranking.
+
+03:25
+You wanna be able to implement
+your own ranking or at least
+
+03:28
+play with parameters.
+
+03:29
+So that's one of the first things
+that we'll need to change around a
+
+03:32
+little bit when we apply it to RAG.
+
+03:35
+And the other thing is how
+do we take this powerful tool
+
+03:42
+Ancient tool by today's standards
+and apply it to LLMs.
+
+03:49
+So the next step and what you see
+in a lot of enterprises and a lot
+
+03:53
+of big organizations, like if you
+work with financial institutions
+
+03:57
+and hospitals and so on, then
+you'll see a lot of systems
+
+04:00
+like this where you have kind
+of the in-between rag and search.
+
+04:05
+Typically it's just a query of
+words, it's not a question, not
+
+04:09
+a question answer system, but you
+see these in a lot of organizations
+
+04:12
+and they're happy with this,
+they're not willing to let it go.
+
+04:16
+So you have these search semantics,
+either semantic or keyword search
+
+04:20
+systems where you have millions
+of documents and you're able
+
+04:23
+to get some search results, perhaps
+you add some ranking on top of it.
+
+04:30
+But these are systems that are
+very popular in big organizations.
+
+04:35
+And these basically take the next
+step from what I showed before.
+
+04:38
+So now you have control over
+the ranking algorithm.
+
+04:41
+So if you're familiar
+with BM25, how many people
+
+04:43
+have used it before?
+
+04:45
+So it's a powerful ranking system
+and it has the nice feature
+
+04:50
+that it has, you can play around
+with like word frequency or some of
+
+04:54
+the other parameters and settings.
+
+04:56
+And it gives you a little
+bit more flexibility.
+
+05:02
+And yet,
+
+05:03
+It's a keyword
+search system, right?
+
+05:05
+It's still not semantic, at
+least when we talk about BM25.
+
+05:09
+So we want to go now to the next
+stage and connect these two LLMs.
+
+05:16
+And that's where
+embeddings come in.
+
+05:17
+I assume everyone's
+familiar with embeddings.
+
+05:22
+So the idea of embeddings
+is, again, that we can take
+
+05:25
+these questions or keywords and
+transform them to a certain space.
+
+05:31
+Where we as humans can't really
+make sense of these numbers,
+
+05:35
+but we know this is a really great
+format for search, for clustering,
+
+05:39
+for a lot of other downward tasks.
+
+05:41
+So we're gonna take
+this powerful schema.
+
+05:44
+This is important because
+we're gonna use this in our
+
+05:46
+evaluation framework as well.
+
+05:48
+So embedding is a key component,
+not just of RAG, but this
+
+05:53
+is something we'll use in
+our evaluation system.
+
+05:56
+And in case people are not
+familiar with embeddings,
+
+05:59
+I think most people are.
+
+06:00
+But one way I like to explain
+the intuition is imagine you
+
+06:04
+have this huge library, you walk
+into one of the largest libraries
+
+06:07
+in the world, and you know
+you like a specific kind of book,
+
+06:10
+and you wanna find similar books.
+
+06:12
+So this is immediately a
+multi-dimensional problem, right?
+
+06:15
+Because how I'm gonna decide what
+book is similar to what I like?
+
+06:21
+So perhaps it's
+according to genre, right?
+
+06:23
+I like science fiction, so find all
+the other science fiction novels.
+
+06:27
+Or maybe I wanna do, I like
+really long, boring novels.
+
+06:31
+Find me other long,
+boring novels, right?
+
+06:33
+It's a multi-dimensional problem,
+and basically what embeddings
+
+06:37
+allows us to do intuitively
+is to look along different
+
+06:41
+dimensions and find similarity
+along different dimensions.
+
+06:44
+And so this is a
+very powerful space.
+
+06:47
+Obviously everyone's familiar
+with it from LLM, but it's
+
+06:50
+very important to understand that
+we're gonna use this tool quite
+
+06:53
+a bit today for evaluating RAG
+as well and for semantic search.
+
+07:00
+And we have, today
+we'll be using NIM.
+
+07:05
+How many of you have already
+used NIMS before?
+
+07:09
+Great, so we're gonna use
+our own embedding models that
+
+07:11
+we trained at NVIDIA.
+
+07:14
+As NIM, we also have alternative
+embedding models that you
+
+07:17
+can use, and one of the things
+that we encourage you to do
+
+07:19
+during the course today is
+also, of course, download
+
+07:21
+the notebooks and experiment
+with different models and see
+
+07:24
+the difference, because embedding
+models make a huge difference.
+
+07:29
+As you probably know, there are
+now specific embedding models.
+
+07:34
+So if I want to search for
+code, there are code-specific
+
+07:38
+embedding models.
+
+07:39
+If I use low-resource language,
+like Hebrew or Arabic, it's
+
+07:43
+a big problem in our region,
+where these embedding models don't
+
+07:46
+work for our region's languages.
+
+07:48
+So we're actually training
+our own embedding models on
+
+07:51
+our region's languages, and
+then it works amazing.
+
+07:54
+So this is another really
+important thing to keep in mind.
+
+07:58
+Probably a lot of you, when
+you're moving these rags to
+
+08:01
+production, maybe you're working
+on a specific domain, finance or
+
+08:04
+healthcare, it's important to use
+the correct embedding model, right?
+
+08:08
+So that's not just for evaluation,
+but for rag as well.
+
+08:13
+And of course, there's
+the vector store.
+
+08:15
+So just quickly, if people
+are not familiar with the rag.
+
+08:19
+It's a very simple concept.
+
+08:20
+The idea is that we ask a
+question and rather going
+
+08:23
+straight to the LLM, we first
+orchestrate and we run a retrieval
+
+08:28
+based on our question.
+
+08:30
+We find the most
+relevant information.
+
+08:32
+We use some chunking, right, to
+find the ideal length of the text.
+
+08:37
+And then we just slap
+that onto our prompt.
+
+08:40
+And now we have an intelligent
+augmented system, essentially
+
+08:42
+without training the LLM.
+
+08:47
+Now, when you look at this
+RAG system you understand
+
+08:49
+why evaluating it is so difficult
+because one of the things that
+
+08:53
+we've seen firsthand with a lot
+of our collaborations with industry
+
+08:58
+is that often these systems
+fail at the retrieval stage.
+
+09:02
+And what happens when organizations
+try to evaluate is they just
+
+09:05
+look at the last stage and
+they say, okay, something's wrong.
+
+09:09
+So maybe I should use a
+different LLM, right?
+
+09:12
+So you could waste your time,
+like with LLMs, and often
+
+09:15
+it's just like it could be
+the chunk size that you're
+
+09:17
+selecting the wrong chunk size.
+
+09:18
+It could be the embedding
+model, like I said, like in
+
+09:20
+our region, it just kills
+everything, it never works.
+
+09:23
+So you can have the most amazing
+like Hebrew or Arabic LLM, but if
+
+09:26
+your embedding model is a general
+one, it's just not going to work.
+
+09:29
+So one of the things that
+we're going to want to do
+
+09:31
+is how can we evaluate these
+different components within the
+
+09:34
+flow as well, not just at the end.
+
+09:37
+That's going to be super critical
+to everything we do today.
+
+09:48
+And the other important thing
+is for those of you that have
+
+09:50
+been, how many are here in
+the deep learning space for
+
+09:53
+let's say 10 years or so?
+
+09:55
+How many have like a
+decade of experience?
+
+09:59
+How many have five
+years of experience?
+
+10:02
+Okay, and so for those of you that
+have been in the deep learning
+
+10:06
+world for like a decade since
+its inception, then you're familiar
+
+10:11
+with a lot of other different
+fields of evaluation, right?
+
+10:14
+Like BLEU score.
+
+10:16
+That's what we used to use a lot,
+like in the old NLP days, right?
+
+10:20
+Or using specific data sets,
+like academic data sets.
+
+10:23
+There's a lot of things you
+could do to evaluate, but it's
+
+10:26
+just not gonna do for RAG, because
+
+10:31
+just think about how are you gonna
+come up with the type of questions
+
+10:34
+that your customer would ask?
+
+10:35
+Maybe you have a QA team just
+come up with questions, right?
+
+10:38
+But that's not a very robust
+way to do things, so.
+
+10:41
+A lot of these different LLM
+evaluation schemes that you
+
+10:45
+read about, and this is a really
+hot topic, they're not gonna be
+
+10:48
+relevant for RAG, and that's why we
+have to employ these more complex
+
+10:51
+systems, which we'll see today,
+which is here on the right side.
+
+10:57
+But that's a really important
+point for those of you that
+
+11:00
+have done evaluations for
+other systems, is that it's not
+
+11:05
+It's not always clear, right?
+
+11:06
+Because people that have experience
+always say, wait, why are
+
+11:08
+you complicating things?
+
+11:10
+I have a data set, I have a
+test set, and that's enough.
+
+11:12
+So you'll see today
+why it's not enough.
+
+11:15
+And the other thing
+we'll go through is
+
+11:17
+specialized metrics, right?
+
+11:18
+So when we have a RAG, as I
+alluded to before, we want
+
+11:23
+to be able to see, did we
+fail at the retrieval stage?
+
+11:26
+So the first question I'm going
+to ask is, given a question and
+
+11:30
+the context that I retrieved using
+my embedding model in VectorStore,
+
+11:34
+is the retrieved context even
+relevant to the question?
+
+11:36
+A lot of times it fails there.
+
+11:39
+A lot of times my chunk is
+too small and maybe I missed
+
+11:41
+that information as well.
+
+11:43
+So we'll see, we'll get into a
+lot of deep metrics and you'll be
+
+11:46
+able to customize your own metrics
+for the system based on this.
+
+11:51
+And the other thing we'll want
+to see is, does the retrieved
+
+11:54
+context contain information
+relevant to the response, right?
+
+11:56
+So once we get the response, did
+the response, was it generated
+
+12:00
+off this context, or did it
+come from some other place, right?
+
+12:04
+And then finally, is the response
+accurate and relevant to the
+
+12:07
+question, which is like the
+usual Q&A-type evaluation metric.
+
+12:11
+So we need metrics that
+handle all these issues
+
+12:15
+and all these challenges,
+and that's what we'll do today.
+
+12:18
+That's basically what we'll
+do today. AND ALSO THINK ABOUT
+
+12:20
+You can already start thinking
+about how we apply this to
+
+12:23
+semantic search, right?
+
+12:24
+So when I go to all these
+old semantic search systems
+
+12:27
+and I want to utilize the
+same framework, how do I do that?
+
+12:32
+Okay, so we're gonna use LLM
+as a judge, which is a pretty
+
+12:36
+amazing technique.
+
+12:38
+And we're gonna use some
+pretty advanced prompts
+
+12:40
+that we put together.
+
+12:41
+By the way, all the content
+for this course is what we
+
+12:44
+developed specifically for GTC.
+
+12:47
+And you're welcome to download
+the notebooks and then use them
+
+12:49
+as reference for your own work.
+
+12:52
+That's the idea really to
+make this open source.
+
+12:55
+And you'll see some pretty
+advanced prompts.
+
+12:58
+And it always amazes me how
+well it works, how well LLM
+
+13:01
+as a judge works.
+
+13:02
+With the fact that we can
+just basically prompt it and
+
+13:05
+say, essentially, tell me
+how well my RAG is working.
+
+13:09
+And give me a value between one
+and zero, and it works really well.
+
+13:13
+It really works robustly.
+
+13:14
+Again, not for these simplistic
+prompts, but you'll see the
+
+13:16
+actual prompts that we'll
+have in this course.
+
+13:19
+They work pretty robustly,
+and you'll have a chance to
+
+13:21
+improve them even more.
+
+13:22
+On purpose, we put some bugs
+inside the prompts that you'll
+
+13:26
+have a chance to play around
+with and improve.
+
+13:28
+And by the way, all the
+questions in this course,
+
+13:31
+all the exercises, are open-ended.
+
+13:33
+So there's no right or wrong,
+but you can see based on how
+
+13:35
+you improve the prompt, whether
+it's better or not.
+
+13:40
+And I say this also because we're
+a little bit limited in time.
+
+13:43
+So keep that in mind.
+
+13:45
+So if you don't finish everything,
+it's totally fine.
+
+13:46
+You could continue later.
+
+13:48
+We're gonna be using Ragas.
+
+13:50
+How many have used it before?
+
+13:54
+Okay, perfect. So there's
+a lot of different opinions
+
+13:57
+on RAGAS, even within our team, but
+the nice thing is it's open source.
+
+14:01
+It has a
+relatively large community.
+
+14:03
+There are other tools as well,
+but we use it here because
+
+14:06
+we feel it's a good reference
+and we connect it to our endpoints.
+
+14:11
+It gives us some metrics out
+the box, and it also has the
+
+14:15
+ability to customize the metrics
+with prompts, and not just
+
+14:18
+the metrics, but the...
+
+14:21
+THE GENERATION OF DATA.
+
+14:23
+SO WHEN WE LOOK AT A RAG EVALUATION
+FLOW, THE WAY IT WORKS IS
+
+14:28
+WE TAKE A DATA SET.
+
+14:29
+SO YOU ACTUALLY TAKE THE DATA
+SET FROM YOUR RAG.
+
+14:32
+THE FIRST THING WE WANT TO
+DO IS WE WANT TO GENERATE
+
+14:34
+SYNTHETIC TEST DATA.
+
+14:36
+AND THIS IS GOING TO BE QUESTION,
+ANSWER, AND CONTEXT AS WELL, RIGHT?
+
+14:41
+SO SYNTHETIC DATA SHOULD ALSO
+INCLUDE WHAT WE RETRIEVED,
+
+14:45
+AND THEN THAT'S ALL GOING
+TO BE OUR GROUND TRUTH.
+
+14:47
+And depending on the metrics,
+you can decide if you use
+
+14:49
+that ground truth or not.
+
+14:51
+Once we have that test data,
+we'll run evaluation metrics
+
+14:55
+by running your actual RAG and
+on the test questions and computing
+
+15:01
+metrics, and then we'll look at
+those metrics and see if they make
+
+15:03
+sense and then improve accordingly.
+
+15:06
+What we're going to be using
+today is the USC course catalog
+
+15:10
+for the first few notebooks.
+
+15:12
+It's available on Hugging Face.
+
+15:13
+And the reason we chose this
+is because it's a nice, kind
+
+15:18
+of very focused data set.
+
+15:20
+And the question we want to
+ask is, I'm a student.
+
+15:24
+I'm a new undergrad student
+or grad student at USC.
+
+15:27
+I want to ask questions
+about the catalog.
+
+15:29
+I don't want to ask these
+philosophical questions, right?
+
+15:32
+If I see a course called quantum
+physics, I don't want to say,
+
+15:35
+what's the meaning of life?
+
+15:36
+I want to ask questions that
+a student would ask, right?
+
+15:38
+Like, what time is this
+course taking place?
+
+15:41
+How many units?
+
+15:43
+Is it hard?
+
+15:44
+So on.
+
+15:45
+So that'll be the focus for
+the first few exercises.
+
+15:51
+And one of the other things
+that you'll see is that
+
+15:54
+this is tabular data.
+
+15:55
+And that's another challenge
+that we have with RAG is how
+
+15:57
+do you handle tabular data in RAG?
+
+16:01
+You can imagine there are so
+many different ways to represent
+
+16:04
+them in embedding space, right?
+
+16:06
+So you could take rows.
+
+16:09
+You can take columns.
+
+16:10
+There's a question if you
+want to add the column label
+
+16:13
+as well, that makes a big
+difference if you add it or not.
+
+16:16
+Perhaps you want to run an
+LLM to summarize the rows
+
+16:19
+and then put that as input.
+
+16:22
+Or maybe you want to select
+very specific data, right?
+
+16:25
+So that's another thing that,
+pay attention to how we take
+
+16:28
+this tabular data and transform
+it into embeddings.
+
+16:31
+So we made a specific choice,
+perhaps you'll decide that
+
+16:34
+there are better choices.
+
+16:40
+Okay, so without further ado,
+you can now sign on, log on
+
+16:45
+to your system if you haven't yet.
+
+16:48
+This is the code.
+
+16:53
+Once you log in, I think all of
+you already know this, but you
+
+16:56
+press the start button once you log
+in, it takes a minute or two, and
+
+17:01
+then you can launch the system and
+get JupyterLab up and running, and
+
+17:05
+we have the TAs helping out here.
+
+17:08
+What we're gonna do now is we're
+gonna go through notebook zero
+
+17:11
+and one only, so don't jump ahead.
+
+17:14
+Cause then everything I'll
+talk about will be super boring
+
+17:16
+cause you already know what
+I'm gonna talk about.
+
+17:18
+So do notebook zero and one.
+
+17:20
+Notebook zero is basically
+that evolution of RAG, right?
+
+17:24
+From search systems to
+all the way to RAG.
+
+17:28
+You'll actually see how we take
+the same question, same query and
+
+17:31
+go through that whole evolution.
+
+17:34
+And notebook one will be
+just the, just out the box
+
+17:39
+creating synthetic data.
+
+17:42
+Okay, so let's get started
+with that, and if you have
+
+17:44
+issues, technical issues, let
+us know with the cups, of course,
+
+17:48
+and yeah, we'll give you like
+10 or 15 minutes or so, and then
+
+17:54
+I'll see where everyone stands.
+
+18:00
+Thank you.
+
+18:20
+Thank you for watching.
+
+19:06
+Mike, okay, so one of the
+things that you'll, perhaps
+
+19:09
+you'll have some technical
+issues, I actually have technical
+
+19:11
+issues myself as well, so
+if, once you press start, you get
+
+19:14
+like a blank screen, just restart
+it, and it should work, and then
+
+19:19
+you'll see the first two notebooks,
+and the first two notebooks don't
+
+19:24
+have exercises, just, you know,
+run through them, I do encourage
+
+19:27
+you to read the text because
+there's some extra information,
+
+19:30
+please also download the notebooks.
+
+19:33
+And then pay attention, once
+you generate the synthetic data,
+
+19:36
+look at what it does and see what
+you think, if it works well or not.
+
+20:03
+OK, so we're going to move
+on in the interest of time
+
+20:05
+to the next topic.
+
+20:06
+And again, the course is,
+we don't have a lot of time.
+
+20:11
+If we had eight hours, I think that
+would be ideal for this course.
+
+20:14
+But you can download the notebooks.
+
+20:16
+And I encourage you to do so and
+also experiment later a lot more.
+
+20:20
+But just things to point out,
+so the first notebook was
+
+20:23
+really to go through the evolution
+of search to RAG and ask the
+
+20:28
+same question on different systems
+and again keep in mind that a lot
+
+20:32
+of organizations have these three
+
+20:38
+And often there was a great
+question here about like a
+
+20:41
+coherent re-rank, right?
+
+20:42
+So often what you have is
+you have an organization that
+
+20:45
+has, let's say, a BM25 database
+and a vector database.
+
+20:50
+And then you do a search for
+the entire organization's
+
+20:54
+documents and some, so you have to
+do exactly what we did in notebook
+
+20:58
+zero, run a search on the BM-25,
+run a search on vector search, but
+
+21:02
+what do you do with the results?
+
+21:04
+Like do you look at both of them?
+
+21:05
+So you take re-rank and you
+feed the results into the
+
+21:08
+re-rank model and then it
+just re-ranks all the results
+
+21:12
+into one cohesive set of responses.
+
+21:15
+So that's a nice, useful tool that
+a lot of people do in practice.
+
+21:20
+The other thing to notice
+is what I mentioned here on
+
+21:23
+the embedding, right?
+
+21:24
+So we have a lot of flexibility
+when it comes to how we take tables
+
+21:29
+and turn them into embeddings.
+
+21:31
+That's a huge domain, and
+as I said before, there's
+
+21:35
+no right or wrong answer.
+
+21:37
+But what we did here is we
+actually took a row.
+
+21:40
+And we threw that whole row into
+a single concatenated string.
+
+21:43
+And if you notice, we only
+took, if you look at the USC
+
+21:48
+database, the data set, then it has
+a lot of rows and a lot of comms.
+
+21:52
+Some of them are not so useful.
+
+21:54
+So what we did here is we
+filtered out, we only took
+
+21:56
+the things we're interested
+in, like class name, units.
+
+21:59
+Catalog, time, and so on,
+and then we didn't add.
+
+22:02
+So that's a nice trick you
+could do with tables to filter
+
+22:05
+out information you don't want.
+
+22:06
+The other thing is we actually
+added labels, right?
+
+22:09
+Like it says class name.
+
+22:11
+The course will cover the
+following topics.
+
+22:13
+So that all goes into a single
+string that's self-descriptive
+
+22:17
+for the course, and then we
+turn all that to embedding.
+
+22:20
+This is only one way to solve the
+problem, but it's very effective.
+
+22:25
+How many people got to this stage
+with the synthetic data generation?
+
+22:31
+And did you notice the results?
+
+22:32
+How did they look?
+
+22:35
+So why not?
+
+22:39
+Yes, overgeneralized, so that's
+the first problem.
+
+22:44
+And that's when people usually
+give up on these systems, is they
+
+22:48
+run, they invest time like in RAGAS
+or another system, and they run
+
+22:52
+an evaluation, and they say, oh,
+look at this, this is ridiculous.
+
+22:54
+I asked the USC dataset a question
+about, I wanna generate stuff that
+
+23:00
+a USC student would ask, and then I
+get all these generic philosophical
+
+23:04
+questions, right, like.
+
+23:07
+There's a course on 20th century
+American literatures and cultures.
+
+23:10
+So it says, the question
+to generate is what role
+
+23:13
+do hemispheric traditions
+play in shaping, right?
+
+23:16
+This is not what we want.
+
+23:18
+So we want to be able to take
+this and steer the test data
+
+23:23
+in a specific direction.
+
+23:25
+You already saw that's not
+happening by default, and
+
+23:27
+that's where most people give
+up, but then we ask you, wait,
+
+23:29
+don't give up yet, because
+we can customize these prompts very
+
+23:33
+easily, and that's what we'll do in
+the next notebook, and there you'll
+
+23:36
+have also some exercises, but just
+so you know, one of the things that
+
+23:40
+we can do that's quite effective.
+
+23:43
+is we can use a synthetic
+data generation model.
+
+23:46
+And today, just like you have
+LLMs that are instruction
+
+23:48
+models, so we have LLMs that
+were actually tuned for the
+
+23:54
+task of generating synthetic data.
+
+23:56
+That's all they were created for.
+
+23:59
+And you could certainly use
+a model like that.
+
+24:01
+So we have the Nemotron-4-340B
+family of models.
+
+24:06
+And Jensen yesterday in a keynote
+also mentioned the next generation,
+
+24:10
+which is reasoning Nemotron models.
+
+24:12
+But if you look at the
+4-340B family, these are
+
+24:17
+models that were tuned
+for synthetic data generation.
+
+24:21
+And what they have, they have
+an instruct model, but they
+
+24:23
+also have a reward model.
+
+24:25
+Which basically says generate
+questions for me or generate
+
+24:30
+content for me, but I also
+have this reward model that's
+
+24:32
+going to filter and check
+based on metrics that I defined
+
+24:36
+if these results are good or not.
+
+24:38
+So we could employ something like
+that, but we're not going to in
+
+24:40
+this course because that's a little
+bit more complex to set up and
+
+24:44
+often that requires some training.
+
+24:46
+But just so you know,
+that is an option.
+
+24:48
+What we're going to do in this
+course, in the next notebook,
+
+24:51
+is we're going to look at
+how we can steer SDG with
+
+24:55
+prompts, prompts only.
+
+24:57
+So one of the nice
+things that Ragas has
+
+25:01
+It has ways to customize the
+prompts pretty easily, and there
+
+25:07
+are different ways to customize.
+
+25:08
+So for example, we can customize
+question style, right?
+
+25:12
+So perhaps the content is good,
+but the style, the language
+
+25:14
+of the question is not ideal.
+
+25:17
+So you can customize
+based on that vector.
+
+25:20
+You can customize
+on question length.
+
+25:22
+You can also add personas
+and define them, right?
+
+25:25
+So if we're gonna have a system
+like for grad students or
+
+25:29
+undergrad students or professors,
+hopefully each one of them
+
+25:31
+will ask different questions.
+
+25:33
+So you could do that as well.
+
+25:35
+What we're going to employ
+here is we're gonna look,
+
+25:38
+we're actually gonna dig in
+to the prompt, the prompt
+
+25:41
+that actually generates the code,
+and we're gonna modify that prompt.
+
+25:45
+So that, and to steer it in
+the right direction.
+
+25:48
+That'll be the next notebook.
+
+25:50
+So you can get started on
+the next notebook now.
+
+25:53
+And this one will have a little
+bit of an exercise.
+
+25:57
+So first just run through
+and run the customized prompt
+
+26:01
+and see if it looks any better.
+
+26:02
+And if it does, hopefully it does.
+
+26:05
+Then try modifying the prompt.
+
+26:08
+To see if you can improve
+it further, because one of
+
+26:13
+the things you should try
+out is perhaps if you run,
+
+26:15
+you'll see I think 20 samples.
+
+26:17
+So if those samples look good,
+try running it again and see
+
+26:20
+if it's good again.
+
+26:21
+I think you'll always find
+one or two that are a little
+
+26:24
+bit still over generic, so
+see if you can change the prompt.
+
+26:29
+To improve that, and the other
+thing to note is that Ragas
+
+26:34
+has different synthesizers, right?
+
+26:35
+So we're focusing, if you saw
+the previous notebook, we used
+
+26:39
+the specific query synthesizer.
+
+26:41
+That's only one of many
+synthesizers you can use.
+
+26:44
+So the last exercise in
+this notebook will be
+
+26:49
+Maybe you can take another
+synthesizer, a different one,
+
+26:51
+and combine the two, right?
+
+26:53
+Say 50-50, use this synthesizer
+50% and this one, and maybe then
+
+26:57
+you'll improve the results, right?
+
+26:58
+So there's different ways.
+
+26:59
+It just shows you the richness
+of the solution and how many
+
+27:02
+ways you can customize.
+
+27:05
+Again, there's no
+right or wrong answer.
+
+27:09
+The other thing I wanted to
+note is that you'll notice
+
+27:12
+when we run Ragas that we always
+just run on a subset of the data.
+
+27:17
+So you'll see that we run on like
+just 20 documents or 50 documents.
+
+27:21
+And the reason is because
+again, in this course, we
+
+27:24
+don't have unlimited GPU capacity
+and we also don't want it
+
+27:28
+to take like 20 minutes for
+you to generate this data.
+
+27:31
+But just know that you could
+also run it on the full data
+
+27:33
+and get richer results.
+
+27:35
+It might take more time, right?
+
+27:37
+So, but just keep that in mind.
+
+27:39
+Note that like, so if you
+take this code, just don't
+
+27:42
+copy paste it as is.
+
+27:48
+Okay, so go ahead and then, you
+know, first, just experiment and
+
+27:53
+see when you run our prompt as is,
+if it looks any better, it should.
+
+27:59
+Look for holes in the solution
+and try to improve the prompt.
+
+28:05
+If possible, there's no,
+like I said, there's no
+
+28:07
+one right solution.
+
+28:20
+And then we're loading the data set
+in the same manner, but the thing
+
+28:23
+to focus on really is the prompt.
+
+28:37
+So take a look at the prompt
+and notice how specific it is.
+
+28:41
+And also very important, see
+the examples that we put in.
+
+28:44
+Now typically when we run these
+systems like on real production
+
+28:48
+systems, it's surprising,
+but usually three to five
+
+28:51
+prompt examples are sufficient.
+
+28:53
+You don't need to put in like 20.
+
+28:54
+Three to five always does it right.
+
+28:59
+And the other thing, note
+all the specifics that we
+
+29:02
+put in here, right?
+
+29:04
+It's as if we're talking to a
+child And we're telling it like.
+
+29:08
+A lot of these tips, but it's
+important, right?
+
+29:10
+And in fact, I don't know how
+many of you have experience
+
+29:13
+with prompt engineering, but if
+you misspell a word or capitalize
+
+29:20
+a word, it sometimes moves
+the whole solution here or there.
+
+29:49
+Okay, so we're gonna stop so we
+have time for the next notebooks.
+
+29:53
+We don't have too much time.
+
+29:56
+But hopefully you noticed
+just by running the prompt as
+
+29:59
+is, the improved prompt, that we're
+already getting much better data.
+
+30:05
+And that's because we had a
+prompt that had very clear
+
+30:09
+instructions, as you saw.
+
+30:11
+Maybe even too clear.
+
+30:13
+And we had...
+
+30:14
+Example data, and that
+works well, right?
+
+30:16
+Just doing that. And hopefully
+you found, you had time, or found
+
+30:20
+some ways to improve it some more.
+
+30:22
+And again, as you saw before,
+there's a lot of flexibility, so
+
+30:26
+you could do this for hours, right?
+
+30:28
+And what we're trying to show
+here is that really using
+
+30:31
+customized LLM prompts.
+
+30:34
+NVIDIA is a good method for
+synthesizing data, and you don't
+
+30:40
+always have to go to these huge
+LLMs or train your own models in
+
+30:45
+order to generate synthetic data.
+
+30:47
+Often, you could just
+use this, and you saw
+
+30:49
+the results are pretty good.
+
+30:51
+What kind of things, did you
+notice some problems when
+
+30:54
+you ran this prompt?
+
+30:59
+So one of the problems that
+you might have seen is that
+
+31:01
+sometimes it does misspelling.
+
+31:04
+And that's one problem.
+
+31:08
+And then one of the other
+things that sometimes.
+
+31:12
+Just focuses on one question.
+
+31:13
+Like, it might just take this,
+what are the specific topics?
+
+31:17
+And just 90% it'll get those out.
+
+31:19
+So that's one of the reasons
+why we gave you that final
+
+31:22
+exercise, where you could
+mix up different synthesizers.
+
+31:26
+And one of the questions was,
+can we take different contexts
+
+31:30
+and synthesize on those?
+
+31:32
+So that's also possible.
+
+31:33
+So there's a lot of different
+solutions for that.
+
+31:37
+Hopefully now we convince
+you that it's possible to,
+
+31:41
+just with prompts, to synthesize
+the data and steer it.
+
+31:45
+And then now we wanna get back
+to this slide about the metrics,
+
+31:49
+which is perhaps one of the
+most important pieces in this topic
+
+31:53
+is because you need quantitative
+results at the end of the day.
+
+31:58
+You can't rely on these blue
+scores or F1 scores for RAG because
+
+32:02
+of the complexity of the system.
+
+32:05
+So what we're gonna do next
+is we're going to talk about
+
+32:10
+different metrics.
+
+32:11
+That we use.
+
+32:13
+So Ragas has a dozen or so metrics.
+
+32:16
+And the most important piece
+is that they're divided into
+
+32:18
+generation retrieval.
+
+32:20
+So think of generation as
+the end of the flow, right?
+
+32:23
+Like after my LLM gives me
+the result, you might already
+
+32:26
+be familiar with these ones
+on the left side.
+
+32:29
+Faithfulness, answer relevancy.
+
+32:30
+These are like general LLM metrics.
+
+32:34
+And we actually, here I put up the
+actual equations for how these are.
+
+32:40
+By the way, if you dig into
+RAGAS in the code, you'll
+
+32:43
+see it uses prompts to tell
+the LLM this is how you should
+
+32:48
+compute the metrics, right?
+
+32:49
+Take the sum of the cosine
+similarity of these two
+
+32:52
+embeddings, right?
+
+32:52
+So it actually does that, not
+by code, but by prompting.
+
+32:58
+So we divide into these two
+
+33:02
+pieces, faithfulness.
+
+33:04
+Let's talk about faithfulness
+and context precision.
+
+33:05
+That's what we'll be looking
+at in this specific notebook.
+
+33:08
+And you also have a chance
+to customize them.
+
+33:14
+Context recall, for example, what
+it does under the hood is it looks
+
+33:20
+at the context and then breaks
+it down into specific claims.
+
+33:26
+The same thing happens
+in faithfulness, but on
+
+33:29
+the response side.
+
+33:30
+So the first, so it's like a
+multi-stage problem inside Ragas.
+
+33:34
+First it takes an LLM and
+says, take this big chunk of
+
+33:37
+text and break it down into claims.
+
+33:39
+Okay, and then let's say this
+context has 10 claims.
+
+33:43
+Then it says, okay,
+
+33:44
+Based on these claims, are they
+supported by the context, right?
+
+33:48
+And then you normalize that.
+
+33:50
+So it's a multi-stage metric.
+
+33:54
+Internally, it uses multiple
+prompts or multiple calls
+
+33:58
+to the LLM in order to
+compute these metrics.
+
+34:03
+And you can go in and
+modify the prompt.
+
+34:06
+So if you don't like
+the context recall,
+
+34:09
+As it is, you could just take
+the prompt and modify it a
+
+34:13
+little bit, maybe give it your
+own examples, maybe add another
+
+34:16
+multiplier on the end, write
+whatever you want to do if you want
+
+34:19
+further normalization, so you could
+do that for any of these, that
+
+34:24
+you'll see in the next notebook.
+
+34:27
+And the other thing I wanna
+show is this is kind of, kind
+
+34:36
+of like how you customize a metric.
+
+34:39
+And again, as I mentioned
+to someone here before, the
+
+34:40
+API in Regex changes all the time.
+
+34:43
+So this is a little bit of
+an older API, but the concept
+
+34:45
+is the same, right?
+
+34:46
+So you give it a context and
+you give it statements, for
+
+34:49
+example, and then here it's
+a very simple metric.
+
+34:52
+Right, is the
+statement true or not?
+
+34:54
+But you could define any function
+here and give it any number
+
+34:58
+of examples and here the answer
+is basically, it's just a whole
+
+35:02
+bunch of examples that we feed in.
+
+35:04
+So essentially, we are customizing
+the prompt in the same way
+
+35:08
+that you customized the synthetic
+data generation mechanism
+
+35:12
+in RAGAS, but we're gonna
+do the same for metrics.
+
+35:18
+And here we'll be using a
+different data set.
+
+35:22
+So we've had enough of USC, and
+now we're using the Amnesty Q&A.
+
+35:27
+And the reason we're using
+this data set here is because
+
+35:30
+it already has all the fields in
+the format that RAGAS expects them.
+
+35:34
+So it's very easy for us.
+
+35:36
+You don't have to do any
+pre-processing on the data.
+
+35:38
+You can just use it as is.
+
+35:40
+So we have the user input, we
+have the retrieved context,
+
+35:44
+we have the response, we have
+the ground truth, and then
+
+35:47
+what you'll generate for each one
+of these, essentially, at the start
+
+35:51
+of the notebook is you'll generate
+a context recall and a faithfulness
+
+35:55
+metric, and you'll see that
+in one call we just say basically
+
+35:59
+which metrics we're interested in,
+or we could use our own metrics.
+
+36:06
+And yeah, this notebook is
+a little bit more open-ended
+
+36:10
+than the previous one.
+
+36:11
+Some of the first questions
+just ask you to play around
+
+36:15
+at the API level.
+
+36:17
+Some of them give you a lot
+of flexibility, so you can
+
+36:19
+get started now on notebook three.
+
+36:23
+And what you'll see throughout
+this notebook and the next
+
+36:25
+one is what we do is we print
+out, we actually go to RAGAS
+
+36:28
+and we say, okay, let's look at the
+faithfulness prompt, for example.
+
+36:32
+First, we print it out.
+
+36:34
+So you can look at it, it
+might look a little bit messy,
+
+36:36
+but you could look and find
+the instruction and the examples
+
+36:39
+within what it prints.
+
+36:41
+Look through those, understand
+them, and think about how
+
+36:44
+you might want to modify them.
+
+36:48
+So you could either take the
+existing one and modify it,
+
+36:51
+or you can create your own metric.
+
+36:55
+Yeah, so that's it. If you
+have questions, let us know.
+
+37:00
+Oh, very important general comment.
+
+37:04
+Throughout the notebooks,
+you have this API key.
+
+37:06
+Just ignore it. It's there.
+
+37:08
+I was supposed to say that at
+the beginning of the course.
+
+37:09
+It's there for, in the case
+you want to download the
+
+37:12
+notebooks and run them later,
+then you have that there.
+
+37:14
+Then just get your own API key
+from our catalog and plug that in.
+
+37:17
+But for now, there's an
+API key under the hood for
+
+37:21
+the DLI platform.
+
+37:22
+So you don't need to do that.
+
+37:23
+Whether it's commented at
+or not in the next notebook
+
+37:25
+it's not commented at, just ignore.
+
+37:27
+Anything that's related to the
+API key, that's for you later when
+
+37:31
+you download the notebooks that
+you could continue working on them.
+
+37:58
+So we're gonna take about 15
+minutes for this one because
+
+38:01
+again, we don't have a lot of time.
+
+38:04
+But just to give you a feel
+to run through these and then
+
+38:09
+after that we have our final
+topic which is semantic search.
+
+38:43
+Just a second.
+
